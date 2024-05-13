@@ -12,4 +12,16 @@ describe('Test /api/hello', () => {
         expect(response.statusCode).toBe(200);
         expect(response.body).toStrictEqual({ result: 25 });
     });
-});
+    test.each([
+        {square: 1, expected: 1},
+        {square: 4, expected: 16},
+        {square: 5, expected: 25},
+        {square: 10, expected: 100},
+        {square: 12, expected: 144},
+      ])('GET /api/hello/square/$square'
+        , async ({square, expected}) => {
+        const response = await supertest(app).get(`/api/hello/square/${square}`);
+        expect(response.statusCode).toBe(200);
+        expect(response.body).toStrictEqual({ result: expected });
+      });
+}); 
