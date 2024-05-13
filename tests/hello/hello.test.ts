@@ -76,7 +76,7 @@ describe('Test /api/hello', () => {
         expect(response.statusCode).toBe(200);
         expect(response.body.message).toEqual("feldiagonal");
     })
-    test("GET /api/hello/{id} invalid value", async () => {
+    test("GET /api/hello/{id} not found", async () => {
         await helloRepository.clear();
         const response = await supertest(app).get(`/api/hello/6641d45e2607250013854265`);
 
