@@ -17,7 +17,7 @@ router.post('/api/hello',
     expressAsyncHandler(HelloController.addHello)
 );
 router.get('/api/hello/:id',
-    param("id").notEmpty(),
+    param("id").notEmpty().isMongoId(),
     expressAsyncHandler(HelloController.findHello)
 );
 export default router;

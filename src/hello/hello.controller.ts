@@ -10,11 +10,11 @@ export class HelloController {
     }
     static square(req: Request, res: Response) {
         const result = validationResult(req);
-        
+
         if (result.isEmpty()) {
             const num = parseInt(req.params.num);
             res.send({ result: num * num });
-        }else {
+        } else {
             res.status(404).send({ error: 'Invalid input' });
         }
     }
@@ -24,22 +24,29 @@ export class HelloController {
 
     static async addHello(req: Request, res: Response) {
         const result = validationResult(req);
-        
+
         if (result.isEmpty()) {
             const data = req.body;
             await helloRepository.insert(data);
             res.status(201).send(data);
-        }else {
+        } else {
             res.status(400).send({ error: 'Invalid input' });
         }
     }
     static async findHello(req: Request, res: Response) {
         const result = validationResult(req);
-        
+
         if (result.isEmpty()) {
             const data = req.params;
-            res.send(await helloCollection.findOne({ _id: new ObjectId(data.id) }));
-        }else {
+            const result = await helloCollection.findOne({ _id: new ObjectId(data.id) });
+            if (result) {
+                res.send(result);
+            }
+            else {
+                res.status(404).send({ error: 'Message non trouvé.' });
+            }     
+        }
+        else {
             res.status(400).send({ error: 'Invalid input' });
         }
     }
