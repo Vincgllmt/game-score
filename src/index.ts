@@ -2,6 +2,7 @@ import { app } from './app';
 import { serve, setup } from 'swagger-ui-express';
 import { parseDocument } from 'yaml';
 import { readFileSync } from 'fs';
+import 'dotenv/config';
 
 app.use('/api_doc', serve, setup(parseDocument(readFileSync("./openapi.yml").toString())));
 

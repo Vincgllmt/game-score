@@ -1,0 +1,35 @@
+services:
+
+    mongodb:
+        image: mongo:latest
+        environment:
+            MONGO_INITDB_ROOT_USERNAME: ${username}
+            MONGO_INITDB_ROOT_PASSWORD: ${password}
+        ports:
+            - 27017:27017
+        volumes:
+            - mongodb_volume:/data/db
+        networks:
+            mongodb_network:
+
+    mongo-gui:
+        build:
+            context: .
+            dockerfile: mongo-gui.dockerfile
+        restart: always
+        depends_on:
+            - mongodb
+        environment:
+            - MONGO_URL=mongodb://${username}:${password}@mongodb:27017
+        ports:
+            - 4321:4321
+        networks:
+            mongodb_network:
+
+volumes:
+    mongodb_volume:
+
+networks:
+    mongodb_network:
+        driver: bridge
+
