@@ -68,11 +68,10 @@ describe('Test /api/hello', () => {
     });
     test("GET /api/hello/{id}", async () => {
         await helloRepository.clear();
-        await helloRepository.insert(
+        const result = await helloRepository.insert(
             { message: "feldiagonal" },
         ); 
-        
-        const response = await supertest(app).get("/api/hello/1");
+        const response = await supertest(app).get(`/api/hello/${result.insertedIds[0]}`);
 
         expect(response.statusCode).toBe(200);
         expect(response.body.message).toEqual("feldiagonal");

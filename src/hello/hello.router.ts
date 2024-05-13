@@ -16,5 +16,8 @@ router.post('/api/hello',
     body("message").isString().notEmpty(),
     expressAsyncHandler(HelloController.addHello)
 );
-
+router.get('/api/hello/:id',
+    param("id").notEmpty(),
+    expressAsyncHandler(HelloController.findHello)
+);
 export default router;

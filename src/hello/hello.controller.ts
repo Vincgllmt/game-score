@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { validationResult } from "express-validator";
 import { helloCollection } from "./hello.collection";
 import { helloRepository } from "./hello.repository";
+import { ObjectId } from "mongodb";
 
 export class HelloController {
     static world(req: Request, res: Response) {
@@ -28,6 +29,16 @@ export class HelloController {
             const data = req.body;
             await helloRepository.insert(data);
             res.status(201).send(data);
+        }else {
+            res.status(400).send({ error: 'Invalid input' });
+        }
+    }
+    static async findHello(req: Request, res: Response) {
+        const result = validationResult(req);
+        
+        if (result.isEmpty()) {
+            const data = req.params;
+            res.send(await helloCollection.findOne({ _id: new ObjectId(data.id) }));
         }else {
             res.status(400).send({ error: 'Invalid input' });
         }
