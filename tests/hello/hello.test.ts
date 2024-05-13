@@ -5,5 +5,6 @@ describe('Test /api/hello', () => {
     test('GET /api/hello/world', async () => {
         const response = await supertest(app).get('/api/hello/world');
         expect(response.statusCode).toBe(200);
+        expect(response.body).toStrictEqual({ message: 'Hello, world!' });
     });
 });
