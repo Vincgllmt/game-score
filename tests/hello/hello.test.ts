@@ -1,6 +1,7 @@
 import supertest from 'supertest';
 import { app } from '../../src/app';
 import { mongoClient } from '../../src/services/mongodb';
+import {helloCollection} from '../../src/hello/hello.collection';
 describe('Test /api/hello', () => {
     test('GET /api/hello/world', async () => {
         const response = await supertest(app).get('/api/hello/world');

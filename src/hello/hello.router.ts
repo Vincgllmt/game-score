@@ -9,5 +9,5 @@ router.get('/api/hello/square/:num',
     param("num").isNumeric(),
     HelloController.square
 );
-
+router.get('/api/hello', HelloController.hello);
 export default router;
