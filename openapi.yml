@@ -1,0 +1,38 @@
+openapi: 3.1.0
+info:
+  title: API Game-score
+  description: .
+  version: 0.0.1
+
+servers:
+- url: http://localhost:7777
+  description: Serveur de développement
+
+tags:
+  - name: hello
+    description: première API avec Express
+      
+paths:
+  /api/hello/world:
+    get:
+      tags:
+        - hello
+      description: message de bienvenue
+      responses:
+        200:
+          description: retourne un message de bienvenue
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Hello'
+
+components:
+  schemas:
+    Hello:
+      type: object
+      properties:
+        message:
+          type: string
+      additionalProperties: false
+      required:
+        - message
