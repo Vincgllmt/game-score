@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { validationResult } from "express-validator";
 import { helloCollection } from "./hello.collection";
+import { helloRepository } from "./hello.repository";
 
 export class HelloController {
     static world(req: Request, res: Response) {
@@ -18,5 +19,17 @@ export class HelloController {
     }
     static async hello(req: Request, res: Response) {
         res.send(await helloCollection.find().toArray());
+    }
+
+    static async addHello(req: Request, res: Response) {
+        const result = validationResult(req);
+        
+        if (result.isEmpty()) {
+            const data = req.body;
+            await helloRepository.insert(data);
+            res.status(201).send(data);
+        }else {
+            res.status(404).send({ error: 'Invalid input' });
+        }
     }
 }
