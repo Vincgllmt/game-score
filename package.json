@@ -43,7 +43,7 @@
     "express-fileupload": "^1.4.3",
     "express-session": "^1.17.3",
     "express-validator": "^7.0.1",
-    "mongodb": "^6.2.0",
+    "mongodb": "^6.6.1",
     "redis": "^4.6.11",
     "socket.io": "^4.7.2",
     "swagger-ui-express": "^5.0.0",
