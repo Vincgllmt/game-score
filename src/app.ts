@@ -1,7 +1,8 @@
-import express, { Request, Response, NextFunction } from 'express';
+import express from 'express';
+import  helloRouter  from './hello/hello.router';
 
-export const app = express();
+const app = express();
 
-app.get('/api/hello/world', (req: Request, res: Response, next: NextFunction) => {
-    res.send({ message: 'Hello, world!' });
-});
+app.use("/", helloRouter)
+
+export {app};
