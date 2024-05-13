@@ -24,4 +24,9 @@ describe('Test /api/hello', () => {
         expect(response.statusCode).toBe(200);
         expect(response.body).toStrictEqual({ result: expected });
       });
+    test('GET /api/hello/square/XYZ', async () => {
+        const response = await supertest(app).get('/api/hello/square/XYZ');
+        expect(response.statusCode).toBe(404);
+        expect(response.body).toStrictEqual({ error: 'Invalid input' });
+    });
 }); 
