@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: API Game-score
-  description: .
+  description: apagnan
   version: 0.0.1
 
 servers:
@@ -10,17 +10,17 @@ servers:
 
 tags:
   - name: hello
-    description: première API avec Express
+    description: Première API avec Express
       
 paths:
   /api/hello/world:
     get:
       tags:
         - hello
-      description: message de bienvenue
+      description: Message de bienvenue
       responses:
         200:
-          description: retourne un message de bienvenue
+          description: Retourne un message de bienvenue
           content:
             application/json:
               schema:
@@ -29,22 +29,33 @@ paths:
     get:
       tags:
         - hello
-      description: calcule tah les carrés
+      description: Calcule tah les carrés
       parameters:
         - name: number
           in: path
-          description: le nombre dont on veut calculer le carré
+          description: Le nombre dont on veut calculer le carré
           required: true
           schema:
             type: integer
       responses:
         200:
-          description: retourne un carré spécifié dans l'url
+          description: Retourne un carré spécifié dans l'url
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Square'
-
+  /api/hello:
+    get:
+      tags:
+        - hello
+      description: utilise la base de données
+      responses:
+        200:
+          description: Retourne la liste des hello world
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Hello'
 components:
   schemas:
     Hello:
@@ -64,4 +75,4 @@ components:
           type: string
       additionalProperties: false
       required:
-      - result
+        - result
