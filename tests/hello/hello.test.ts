@@ -66,7 +66,17 @@ describe('Test /api/hello', () => {
         expect(response.statusCode).toBe(400);
         expect(response.body.error).toEqual("Invalid input");
     });
+    test("GET /api/hello/{id}", async () => {
+        await helloRepository.clear();
+        await helloRepository.insert(
+            { message: "feldiagonal" },
+        ); 
+        
+        const response = await supertest(app).get("/api/hello/1");
 
+        expect(response.statusCode).toBe(200);
+        expect(response.body.message).toEqual("feldiagonal");
+    })
     afterAll(async () => {
         await mongoClient.close();
     })
