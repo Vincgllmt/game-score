@@ -29,7 +29,7 @@ export class HelloController {
             await helloRepository.insert(data);
             res.status(201).send(data);
         }else {
-            res.status(404).send({ error: 'Invalid input' });
+            res.status(400).send({ error: 'Invalid input' });
         }
     }
 }
