@@ -104,6 +104,37 @@ paths:
       responses:
         204:
           description: Hello supprimé avec succès
+  /api/player:
+    get:
+      tags:
+        - player
+      description: Retourne la liste des joueurs
+      parameters:
+        - name: lastName
+          in: query
+          description: Le nom du joueur
+          required: false
+          schema:
+            type: string
+        - name: tour
+          in: query
+          description: Le tour du joueur
+          required: false
+          schema:
+            type: integer
+        - name: country
+          in: query
+          description: Le pays du joueur
+          required: false
+          schema:
+            type: string
+      responses:
+        200:
+          description: Retourne la liste des joueurs
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Player'
   
 components:
   schemas:
@@ -125,3 +156,20 @@ components:
       additionalProperties: false
       required:
         - result
+    Player:
+      type: object
+      properties:
+        firstName:
+          type: string
+        lastName:
+          type: string
+        country:
+          type: string
+        tour:
+          type: integer
+      additionalProperties: false
+      required:
+        - firstName
+        - lastName
+        - country
+        - tour
