@@ -12,6 +12,10 @@ export class HelloRepository {
     async insert(...data: HelloData[]) {
         return await helloCollection.insertMany(data);
     }
+    
+    async findAll() {
+        return await helloCollection.find().toArray();
+    }
 }
 
 export const helloRepository = new HelloRepository();
