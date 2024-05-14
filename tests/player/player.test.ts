@@ -44,7 +44,58 @@ describe('Test /api/player', () => {
         expect(response.body.length).toEqual(1);
         expect(response.body[0].country).toContain("feldupistan");
     })
-
+    test('GET /api/player/{id}', async () => {
+        await playerRepository.clear();
+        const player = createPlayer();
+        const inserted = await playerRepository.insert(player);
+        
+        const response = await supertest(app).get(`/api/player/${inserted.insertedIds[0]}`);
+        
+        expect(response.statusCode).toBe(200); 
+        expect(response.body.firstName).toEqual(player.firstName);
+        expect(response.body.lastName).toEqual(player.lastName);
+        expect(response.body.country).toEqual(player.country);
+        expect(response.body.tour).toEqual(player.tour);
+    })
+    test('GET /api/player/{id} not found', async () => {
+        await playerRepository.clear();
+        
+        const response = await supertest(app).get(`/api/player/6641d45e2607250013854265`);
+        
+        expect(response.statusCode).toBe(404); 
+        expect(response.body).toStrictEqual({ error: 'Player not found' });
+    })
+    test('GET /api/player/{id} invalid id', async () => {
+        await playerRepository.clear();
+        
+        const response = await supertest(app).get(`/api/player/123456`);
+        
+        expect(response.statusCode).toBe(400); 
+        expect(response.body).toStrictEqual({ error: 'Invalid input' });
+    }),
+    test('POST /api/player', async () => {
+        await playerRepository.clear();
+        const player = createPlayer();
+        
+        const response = await supertest(app)
+            .post("/api/player")
+            .send(player);
+        
+        expect(response.statusCode).toBe(201);
+        expect(response.body.firstName).toEqual(player.firstName);
+        expect(response.body.lastName).toEqual(player.lastName);
+        expect(response.body.country).toEqual(player.country);
+        expect(response.body.tour).toEqual(player.tour);
+    });
+    test('POST /api/player invalid value', async () => {
+        await playerRepository.clear();
+        
+        const response = await supertest(app)
+            .post("/api/player");
+        
+        expect(response.statusCode).toBe(400);
+        expect(response.body).toStrictEqual({ error: 'Invalid input' });
+    });
     afterAll(async () => {
         await mongoClient.close();
     })
