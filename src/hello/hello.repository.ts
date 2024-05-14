@@ -12,9 +12,15 @@ export class HelloRepository {
     async insert(...data: HelloData[]) {
         return await helloCollection.insertMany(data);
     }
-    
+
     async findAll() {
         return await helloCollection.find().toArray();
+    }
+
+    async populate(count: number, fixturesGenerator: (partialEntity?: Partial<HelloData>) => HelloData) : Promise<void> {
+        await this.clear();
+        const data = Array.from({ length: count }, () => fixturesGenerator());
+        await this.insert(...data);
     }
 }
 
