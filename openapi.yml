@@ -73,6 +73,37 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Hello'
+  /api/hello/{id}:
+    get:
+      tags:
+        - hello
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      description: Retourne un hello spécifique
+      responses:
+        200:
+          description: Retourne un hello spécifique
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Hello'
+    delete:
+      tags:
+        - hello
+      description: Supprime un hello spécifique
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        204:
+          description: Hello supprimé avec succès
   
 components:
   schemas:
