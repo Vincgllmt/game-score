@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { validationResult } from "express-validator";
 import { playerCollection } from "./player.collection";
+import { ObjectId } from "mongodb";
 
 export class PlayerController {
     static async getAllPlayers(req: Request, res: Response) {
@@ -29,5 +30,25 @@ export class PlayerController {
 
         res.send(players);
 
+    }
+
+    static async getPlayerById(req: Request, res: Response) {
+        const validator = validationResult(req);
+
+        if (!validator.isEmpty()) {
+            res.status(400).send({ error: 'Invalid input' });
+            return;
+        }
+
+        const playerId = req.params.id;
+
+        const player = await playerCollection.findOne({ _id: new ObjectId(playerId) });
+
+        if (!player) {
+            res.status(404).send({ error: 'Player not found' });
+            return;
+        }
+
+        res.send(player);
     }
 }
