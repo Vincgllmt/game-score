@@ -51,4 +51,19 @@ export class PlayerController {
 
         res.send(player);
     }
+    
+    static async createPlayer(req: Request, res: Response) {
+        const validator = validationResult(req);
+
+        if (!validator.isEmpty()) {
+            res.status(400).send({ error: 'Invalid input' });
+            return;
+        }
+
+        const player = req.body;
+
+        await playerCollection.insertOne(player);
+        res.status(201).send(player);
+    }
+
 }
