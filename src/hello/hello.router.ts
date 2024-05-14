@@ -20,4 +20,8 @@ router.get('/api/hello/:id',
     param("id").notEmpty().isMongoId(),
     expressAsyncHandler(HelloController.findHello)
 );
+router.delete('/api/hello/:id',
+    param("id").notEmpty().isMongoId(),
+    expressAsyncHandler(HelloController.deleteHello)
+);
 export default router;

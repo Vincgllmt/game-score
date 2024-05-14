@@ -50,4 +50,22 @@ export class HelloController {
             res.status(400).send({ error: 'Invalid input' });
         }
     }
+
+    static async deleteHello(req: Request, res: Response) {
+        const result = validationResult(req);
+
+        if (result.isEmpty()) {
+            const data = req.params;
+            const result = await helloCollection.deleteOne({ _id: new ObjectId(data.id) });
+            if (result.deletedCount) {
+                res.status(204).send({ message: 'Message supprimé.' });
+            }
+            else {
+                res.status(404).send({ error: 'Message non trouvé.' });
+            }
+        }
+        else {
+            res.status(400).send({ error: 'Invalid input' });
+        }
+    }
 }
