@@ -91,7 +91,7 @@ describe('Test /api/hello', () => {
         const response = await supertest(app).delete(`/api/hello/${result.insertedIds[0]}`);
 
         expect(response.statusCode).toBe(204);
-        expect(helloRepository.findAll()).toBe([]);
+        expect(await helloRepository.findAll()).toStrictEqual([]);
     })
     afterAll(async () => {
         await mongoClient.close();
