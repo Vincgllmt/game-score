@@ -93,6 +93,13 @@ describe('Test /api/hello', () => {
         expect(response.statusCode).toBe(204);
         expect(await helloRepository.findAll()).toStrictEqual([]);
     })
+    test("DELETE /api/hello/{id} not found", async () => {
+        await helloRepository.clear();
+        const response = await supertest(app).delete(`/api/hello/6641d45e2607250013854265`);
+
+        expect(response.statusCode).toBe(404);
+        expect(response.body.error).toEqual("Message non trouvé.");
+    })
     afterAll(async () => {
         await mongoClient.close();
     })
