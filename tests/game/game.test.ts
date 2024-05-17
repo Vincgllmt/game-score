@@ -9,7 +9,7 @@ import { createPlayer } from '../../src/player/player.fixtures';
 
 describe('Test /api/game', () => {
     test('GET /api/game', async () => {
-        gameRepository.populate(10, createGame);
+        await gameRepository.populate(10, createGame);
 
         const response = await supertest(app).get('/api/game');
         expect(response.statusCode).toBe(200);
@@ -17,25 +17,26 @@ describe('Test /api/game', () => {
     });
 
     test('GET /api/game?tour=ATP', async () => {
-        gameRepository.clear();
-        const gamesATP = Array.from({ length: 10 }, () => createGame({ tour: 'ATP' }));
-        const gamesWTA = Array.from({ length: 8 }, () => createGame({ tour: 'WTA' }));
-        gameRepository.insert(...[...gamesATP, ...gamesWTA]);
+        await gameRepository.clear();
+        const gamesATP = Array.from({ length: 10 }, () => createGame({ config: {tour: 'ATP', sets: 3} }));
+        const gamesWTA = Array.from({ length: 8 }, () => createGame({ config: {tour: 'WTA', sets: 3} }));
+        const allGames = [...gamesATP, ...gamesWTA];
+        await gameRepository.insert(...allGames);
         
 
         const response = await supertest(app).get('/api/game?tour=ATP');
         expect(response.statusCode).toBe(200);
         expect(response.body.length).toEqual(10);
         response.body.forEach((game: Game) => {
-            expect(game.tour).toEqual('ATP');
+            expect(game.config.tour).toEqual('ATP');
         });
     });
 
     test('GET /api/game?state=ongoing', async () => {
-        gameRepository.clear();
+        await gameRepository.clear();
         const gamesOnGoing = Array.from({ length: 10 }, () => createGame({ winner: null }));
         const gamesCompleted = Array.from({ length: 8 }, () => createGame({ winner: 0}));
-        gameRepository.insert(...[...gamesOnGoing, ...gamesCompleted]);
+        await gameRepository.insert(...[...gamesOnGoing, ...gamesCompleted]);
         
 
         const response = await supertest(app).get('/api/game?state=ongoing');
@@ -47,11 +48,11 @@ describe('Test /api/game', () => {
     });
 
     test('GET /api/game?lastName=feldup', async () => {
-        gameRepository.clear();
+        await gameRepository.clear();
         const gamesPlayer1 = Array.from({ length: 5 }, () => createGame({ players: { player1: createPlayer({ lastName: 'feldup' }), player2: createPlayer() } }));
         const gamesPlayer2 = Array.from({ length: 5 }, () => createGame({ players: { player1: createPlayer(), player2: createPlayer({ lastName: 'feldup' }) } }));
         const gamesOthers= Array.from({ length: 10 }, () => createGame());
-        gameRepository.insert(...[...gamesPlayer1, ...gamesPlayer2, ...gamesOthers]);
+        await gameRepository.insert(...[...gamesPlayer1, ...gamesPlayer2, ...gamesOthers]);
         
         const response = await supertest(app).get('/api/game?lastName=feldup');
         expect(response.statusCode).toBe(200);
@@ -62,8 +63,8 @@ describe('Test /api/game', () => {
         });
     });
     test('POST /api/game/new', async () => {
-        gameRepository.clear();
-        playerRepository.clear();
+        await gameRepository.clear();
+        await playerRepository.clear();
         const player1 = createPlayer();
         const player2 = createPlayer();
 
@@ -80,7 +81,7 @@ describe('Test /api/game', () => {
         expect(response.body).toHaveProperty('state');
     });
     test('GET /api/game/{id}', async () => {
-        gameRepository.clear();
+        await gameRepository.clear();
         const game = createGame();
         const result = await gameRepository.insert(game);
         const response = await supertest(app).get(`/api/game/${result.insertedIds[0]}`);
@@ -89,7 +90,7 @@ describe('Test /api/game', () => {
         expect(response.body._id).toEqual(`${result.insertedIds[0]}`);
     });
     test('GET /api/game/{id} not found', async () => {
-        gameRepository.clear();
+        await gameRepository.clear();
         const response = await supertest(app).get(`/api/game/123456789012345678901234`);
         expect(response.statusCode).toBe(404);
     });

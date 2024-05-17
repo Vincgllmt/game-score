@@ -10,7 +10,7 @@ export function createGame(partialData?: Partial<Game>): Game {
         },
         config: {
             tour: faker.datatype.boolean() ? 'ATP' : 'WTA',
-            sets: faker.datatype.number({ min: 2, max: 5 }),
+            sets: faker.number.int({ min: 2, max: 5 }),
         },
         state: {
             currentSet: 0,
