@@ -13,4 +13,10 @@ router.get('/api/game',
 router.get('/api/game/:id',
     param('id').isString().isMongoId(),
     expressAsyncHandler(GameController.getGameById));
+router.post('/api/game/new',
+    body('config.tour').isString().isIn(['ATP', 'WTA']),
+    body('players.id1').isString(),
+    body('players.id2').isString(),
+    body('config.sets').isInt({ min:1 }),
+expressAsyncHandler(GameController.createGame));
 export default router;

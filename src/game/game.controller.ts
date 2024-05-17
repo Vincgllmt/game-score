@@ -2,6 +2,9 @@ import { Request, Response } from "express";
 import { validationResult } from "express-validator";
 import { gameCollection } from "./game.collection";
 import { ObjectId } from "mongodb";
+import { playerCollection } from "../player/player.collection";
+import { Game } from "./game";
+import { Player } from "../player/player";
 
 export class GameController {
     static async getAllGame(req: Request, res: Response) {
@@ -54,5 +57,31 @@ export class GameController {
         }
 
         res.send(game);
+    }
+    static async createGame(req: Request, res: Response) {
+        const validator = validationResult(req);
+
+        if (!validator.isEmpty()) {
+            res.status(400).send({ error: 'Invalid input' });
+            return;
+        }
+
+        const data = req.body;
+        const id1 = data.players.id1 as string;
+        const id2 = data.players.id2 as string;
+        const players = await playerCollection.find<Player>({
+            _id: { $in: [new ObjectId(id1), new ObjectId(id2)] }
+        }).toArray();
+        if (players.length !== 2) {
+            res.status(404).send({ error: 'Player not found' });
+            return;
+        }
+        const game: Game = { 
+            players: { player1: players[0], player2: players[1] },
+            config: data.config,
+            state: { currentSet: 0, tieBreak: false, scores: [{ sets: 0, games: [], points: 0 }, { sets: 0, games: [], points: 0 }], winner: undefined } }
+        await gameCollection.insertOne(game);
+
+        res.status(201).send(game);
     }
 }
