@@ -188,6 +188,28 @@ paths:
       tags:
         - game
       description: Retourne la liste des matchs
+      parameters:
+       - name: tour
+         in: query
+         description: Le tour du joueur
+         required: false
+         schema:
+           type: string
+           enum:
+            - ATP
+            - WTA
+       - name: lastName
+         in: query
+         description: Le nom d'un des joueurs
+         required: false
+         schema:
+           type: string
+       - name: state
+         in: query
+         description: Le statut du match
+         required: false
+         schema:
+           type: string
       responses:
         200:
           description: Retourne la liste des matchs
