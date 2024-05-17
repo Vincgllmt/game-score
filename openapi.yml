@@ -152,6 +152,37 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Player'
+  /api/player/{id}:
+    get:
+      tags:
+        - player
+      description: Retourne un joueur spécifique
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Retourne un joueur spécifique
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Player'
+    delete:
+      tags:
+        - player
+      description: Supprime un joueur spécifique
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        204:
+          description: Joueur supprimé avec succès
   
 components:
   schemas:
