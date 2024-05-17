@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { validationResult } from "express-validator";
 import { gameCollection } from "./game.collection";
+import { ObjectId } from "mongodb";
 
 export class GameController {
     static async getAllGame(req: Request, res: Response) {
@@ -34,5 +35,24 @@ export class GameController {
 
         res.send(players);
 
+    }
+    static async getGameById(req: Request, res: Response) {
+        const validator = validationResult(req);
+
+        if (!validator.isEmpty()) {
+            res.status(400).send({ error: 'Invalid input' });
+            return;
+        }
+
+        const gameId = req.params.id;
+
+        const game = await gameCollection.findOne({ _id: new ObjectId(gameId) });
+
+        if (!game) {
+            res.status(404).send({ error: 'Game not found' });
+            return;
+        }
+
+        res.send(game);
     }
 }

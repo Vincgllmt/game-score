@@ -10,5 +10,7 @@ router.get('/api/game',
     query('state').optional().isString().isIn(['ongoing', "completed"]),
     query('lastName').optional().isString(),
     expressAsyncHandler(GameController.getAllGame));
-
+router.get('/api/game/:id',
+    param('id').isString().isMongoId(),
+    expressAsyncHandler(GameController.getGameById));
 export default router;
