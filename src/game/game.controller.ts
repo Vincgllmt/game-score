@@ -17,11 +17,18 @@ export class GameController {
 
         const players = await gameCollection.aggregate([
             {
-            $match: {
-                $and: [
-                    queryTour ? { "config.tour": queryTour } : {},
-                ]
-            }
+                $match: {
+                    $and: [
+                        queryTour ? { "config.tour": queryTour } : {},
+                        queryState ? { "state.winner": queryState === "ongoing" ? null : { $in: [0, 1] } } : {},
+                        queryLastName ? {
+                            $or: [
+                                { "players.player1.lastName": { $regex: queryLastName, $options: 'i' } },
+                                { "players.player2.lastName": { $regex: queryLastName, $options: 'i' } }
+                            ]
+                        } : {}
+                    ]
+                }
             }
         ]).toArray();
 
