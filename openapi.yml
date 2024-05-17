@@ -235,6 +235,42 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Game'
+  /api/game/new:
+    post:
+      tags:
+        - game
+      description: Ajoute un nouveau match
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                players:
+                  type: object
+                  properties:
+                    id1:
+                      type: string
+                    id2:
+                      type: string
+                config:
+                  type: object
+                  properties:
+                    tour:
+                      type: string
+                      enum:
+                      - ATP
+                      - WTA
+                    sets:
+                      type: number
+      responses:
+        201:
+          description: Match ajouté avec succès
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Game'
   
 components:
   schemas:
