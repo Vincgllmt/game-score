@@ -2,6 +2,7 @@ import supertest from 'supertest';
 import { app } from '../../src/app';
 import { mongoClient } from '../../src/services/mongodb';
 import { gameRepository } from '../../src/game/game.repository';
+import { playerRepository } from '../../src/player/player.repository';
 import { createGame } from '../../src/game/game.fixtures';
 import { Game } from '../../src/game/game';
 import { createPlayer } from '../../src/player/player.fixtures';
@@ -59,6 +60,24 @@ describe('Test /api/game', () => {
             expect([game.players.player1.lastName, game.players.player2.lastName])
                 .toContain('feldup');
         });
+    });
+    test('POST /api/game/new', async () => {
+        gameRepository.clear();
+        playerRepository.clear();
+        const player1 = createPlayer();
+        const player2 = createPlayer();
+
+        const result = await playerRepository.insert(player1, player2);
+        const players = { id1: result.insertedIds[0], id2: result.insertedIds[1] };
+        const response = await supertest(app)
+            .post('/api/game/new')
+            .send({players, config: {tour: 'ATP', sets: 5}});
+        expect(response.statusCode).toBe(201);
+        expect(response.body.players.player1._id).toEqual(`${players.id1}`);
+        expect(response.body.players.player2._id).toEqual(`${players.id2}`);
+        expect(response.body.config.tour).toEqual('ATP');
+        expect(response.body.config.sets).toEqual(5);
+        expect(response.body).toHaveProperty('state');
     });
 
     afterAll(async () => {
