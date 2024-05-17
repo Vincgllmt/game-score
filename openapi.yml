@@ -135,6 +135,23 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Player'
+    post:
+      tags:
+        - player
+      description: Ajoute un nouveau joueur
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Player'
+      responses:
+        201:
+          description: Joueur ajouté avec succès
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Player'
   
 components:
   schemas:
@@ -166,7 +183,10 @@ components:
         country:
           type: string
         tour:
-          type: integer
+          type: string
+          enum:
+          - ATP
+          - WTA      
       additionalProperties: false
       required:
         - firstName
