@@ -65,5 +65,24 @@ export class PlayerController {
         await playerCollection.insertOne(player);
         res.status(201).send(player);
     }
+    static async deletePlayer(req: Request, res: Response) {
+        const validator = validationResult(req);
+
+        if (!validator.isEmpty()) {
+            res.status(400).send({ error: 'Invalid input' });
+            return;
+        }
+
+        const playerId = req.params.id;
+
+        const result = await playerCollection.deleteOne({ _id: new ObjectId(playerId) });
+
+        if (result.deletedCount === 0) {
+            res.status(404).send({ error: 'Player not found' });
+            return;
+        }
+
+        res.status(204).send();
+    }
 
 }

@@ -21,5 +21,7 @@ router.post('/api/player',
     body('country').isString().notEmpty(),
     body('tour').isString().notEmpty().isIn(['ATP', 'WTA']),
     expressAsyncHandler(PlayerController.createPlayer));
-
+router.delete('/api/player/:id',
+    param('id').isString().notEmpty().isMongoId(),
+    expressAsyncHandler(PlayerController.deletePlayer));
 export default router;
