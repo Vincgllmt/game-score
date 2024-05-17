@@ -183,6 +183,18 @@ paths:
       responses:
         204:
           description: Joueur supprimé avec succès
+  /api/game:
+    get:
+      tags:
+        - game
+      description: Retourne la liste des matchs
+      responses:
+        200:
+          description: Retourne la liste des matchs
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Game'
   
 components:
   schemas:
@@ -224,3 +236,20 @@ components:
         - lastName
         - country
         - tour
+    Game:
+      type: object
+      properties:
+        players:
+          type: object
+          properties:
+            player1:
+              $ref: '#/components/schemas/Player'
+            player2:
+              $ref: '#/components/schemas/Player'
+            
+        
+      additionalProperties: false
+      required:
+        - player1
+        - player2
+        - score
