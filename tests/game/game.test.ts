@@ -34,8 +34,8 @@ describe('Test /api/game', () => {
 
     test('GET /api/game?state=ongoing', async () => {
         await gameRepository.clear();
-        const gamesOnGoing = Array.from({ length: 10 }, () => createGame({ winner: null }));
-        const gamesCompleted = Array.from({ length: 8 }, () => createGame({ winner: 0}));
+        const gamesOnGoing = Array.from({ length: 10 }, () => createGame({ state: {winner: undefined, scores: [], currentSet: 0, tieBreak: false} }));
+        const gamesCompleted = Array.from({ length: 8 }, () => createGame({ state: {winner: 0, scores: [], currentSet: 0, tieBreak: false} } ));
         await gameRepository.insert(...[...gamesOnGoing, ...gamesCompleted]);
         
 
@@ -44,6 +44,21 @@ describe('Test /api/game', () => {
         expect(response.body.length).toEqual(10);
         response.body.forEach((game: Game) => {
             expect(game.state.winner).toBeNull();
+        });
+    });
+
+    test('GET /api/game?state=completed', async () => {
+        await gameRepository.clear();
+        const gamesOnGoing = Array.from({ length: 10 }, () => createGame({ state: {winner: undefined, scores: [], currentSet: 0, tieBreak: false} }));
+        const gamesCompleted = Array.from({ length: 8 }, () => createGame({ state: {winner: 0, scores: [], currentSet: 0, tieBreak: false} } ));
+        await gameRepository.insert(...[...gamesOnGoing, ...gamesCompleted]);
+        
+
+        const response = await supertest(app).get('/api/game?state=completed');
+        expect(response.statusCode).toBe(200);
+        expect(response.body.length).toEqual(8);
+        response.body.forEach((game: Game) => {
+            expect(game.state.winner).not.toBeNull();
         });
     });
 
