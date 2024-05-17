@@ -217,6 +217,24 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Game'
+  /api/game/{id}:
+    get:
+      tags:
+        - game
+      description: Retourne un match spécifique
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Retourne un match spécifique
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Game'
   
 components:
   schemas:
