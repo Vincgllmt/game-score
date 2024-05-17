@@ -79,9 +79,21 @@ describe('Test /api/game', () => {
         expect(response.body.config.sets).toEqual(5);
         expect(response.body).toHaveProperty('state');
     });
+    test('GET /api/game/{id}', async () => {
+        gameRepository.clear();
+        const game = createGame();
+        const result = await gameRepository.insert(game);
+        const response = await supertest(app).get(`/api/game/${result.insertedIds[0]}`);
 
+        expect(response.statusCode).toBe(200);
+        expect(response.body._id).toEqual(`${result.insertedIds[0]}`);
+    });
+    test('GET /api/game/{id} not found', async () => {
+        gameRepository.clear();
+        const response = await supertest(app).get(`/api/game/123456789012345678901234`);
+        expect(response.statusCode).toBe(404);
+    });
     afterAll(async () => {
         await mongoClient.close();
     })
-    
 }); 
