@@ -3,6 +3,7 @@ import { app } from '../../src/app';
 import { mongoClient } from '../../src/services/mongodb';
 import { playerRepository } from '../../src/player/player.repository';
 import { createPlayer } from '../../src/player/player.fixtures';
+import exp from 'constants';
 describe('Test /api/player', () => {
     test('GET /api/player', async () => {
         await playerRepository.clear();
@@ -96,6 +97,23 @@ describe('Test /api/player', () => {
         expect(response.statusCode).toBe(400);
         expect(response.body).toStrictEqual({ error: 'Invalid input' });
     });
+    test('DELETE /api/player/{id}', async () => {
+        await playerRepository.clear();
+        const player = createPlayer();
+        const inserted = await playerRepository.insert(player);
+
+        const response = await supertest(app).delete(`/api/player/${inserted.insertedIds[0]}`);
+
+        expect(response.statusCode).toBe(204);
+        expect(await playerRepository.findAll()).toStrictEqual([]);
+    })
+    test('DELETE /api/player/{id} not found', async () => {
+        await playerRepository.clear();
+        const response = await supertest(app).delete(`/api/player/6641d45e2607250013854265`);
+
+        expect(response.statusCode).toBe(404);
+        expect(response.body).toStrictEqual({ error: 'Player not found' });
+    })
     afterAll(async () => {
         await mongoClient.close();
     })
