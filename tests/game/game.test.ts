@@ -128,12 +128,12 @@ describe('Test /api/game', () => {
         { scores: [2,0], expected: [3,0] },
         { scores: [3,0], expected: [4,0] },
         { scores: [4,0], expected: [5,0] },
-    ])('PATCH /api/game/{id}/point/{player} ingame not decisive', async ({scores, expected}) => {
+    ])('PATCH /api/game/{id}/point/{player} game/set not decisive', async ({scores, expected}) => {
         await gameRepository.clear();
         const result = await gameRepository.insert(createGame({
             state: {
                 currentSet: 0,
-                tieBreak: true,
+                tieBreak: false,
                 scores: [
                     { sets: 0, games: [], points: scores[0] },
                     { sets: 0, games: [], points: scores[1] }
@@ -145,12 +145,12 @@ describe('Test /api/game', () => {
         expect(response.statusCode).toBe(200);
         expect(response.body._id).toEqual(`${result.insertedIds[0]}`);
 
-        expect(response.body.state.tieBreak).toBeTruthy();
+        expect(response.body.state.tieBreak).toBeFalsy();
         expect(response.body.state.scores[0].points).toEqual(expected[0]);
         expect(response.body.state.scores[1].points).toEqual(expected[1]);
 
     });
-    test('PATCH /api/game/{id}/point/{player} ingame decisive', async () => {
+    test('PATCH /api/game/{id}/point/{player} game/set decisive', async () => {
         await gameRepository.clear();
         const result = await gameRepository.insert(createGame({
             state: {
@@ -180,7 +180,7 @@ describe('Test /api/game', () => {
         expect(response.body.state.scores[0].games[0]).toEqual(0);
         expect(response.body.state.scores[1].games[0]).toEqual(0);
     });
-    test('PATCH /api/game/{id}/point/{player} ingame decisive set', async () => {
+    test('PATCH /api/game/{id}/point/{player} game final decisive', async () => {
         await gameRepository.clear();
         const result = await gameRepository.insert(createGame({
             state: {
