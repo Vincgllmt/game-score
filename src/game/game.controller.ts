@@ -3,7 +3,7 @@ import { validationResult } from "express-validator";
 import { gameCollection } from "./game.collection";
 import { ObjectId } from "mongodb";
 import { playerCollection } from "../player/player.collection";
-import { Game } from "./game";
+import { Game, Score } from "./game";
 import { Player } from "../player/player";
 
 export class GameController {
@@ -76,10 +76,11 @@ export class GameController {
             res.status(404).send({ error: 'Player not found' });
             return;
         }
-        const game: Game = { 
+        const game: Game = {
             players: { player1: players[0], player2: players[1] },
             config: data.config,
-            state: { currentSet: 0, tieBreak: false, scores: [{ sets: 0, games: [], points: 0 }, { sets: 0, games: [], points: 0 }], winner: undefined } }
+            state: { currentSet: 0, tieBreak: false, scores: [{ sets: 0, games: [], points: 0 }, { sets: 0, games: [], points: 0 }], winner: undefined }
+        }
         await gameCollection.insertOne(game);
 
         res.status(201).send(game);
@@ -105,14 +106,23 @@ export class GameController {
 
         const playerScore = game.state.scores[playerId].points;
 
-        if(game.state.tieBreak) {
+        if (game.state.tieBreak) {
             if (playerScore <= 5) {
                 game.state.scores[playerId].points++;
-            }else if(playerScore > game.state.scores[1 - playerId].points) {
+            } else if (playerScore > game.state.scores[1 - playerId].points) {
                 game.state.scores[playerId].sets++;
                 game.state.scores[0].points = 0;
                 game.state.scores[1].points = 0;
                 game.state.tieBreak = false;
+
+                const scoreIndex = game.state.scores.findIndex((score: Score) => score.sets === game.config.sets);
+                if (scoreIndex !== -1) {
+                    game.state.winner = scoreIndex;
+                }else{
+                    game.state.currentSet++;
+                    game.state.scores[0].games.push(playerId);
+                    game.state.scores[1].games.push(playerId);
+                }
             }
         }
 
