@@ -109,6 +109,71 @@ describe('Test /api/game', () => {
         const response = await supertest(app).get(`/api/game/123456789012345678901234`);
         expect(response.statusCode).toBe(404);
     });
+    test('PATCH /api/game/{id}/point/{player} not found', async () => {
+        await gameRepository.clear();
+        const response = await supertest(app).patch(`/api/game/123456789012345678901234/point/1`);
+        expect(response.statusCode).toBe(404);
+    });
+    test('PATCH /api/game/{id}/point/{player} invalid player', async () => {
+        await gameRepository.clear();
+        const game = createGame();
+        const result = await gameRepository.insert(game);
+        const response = await supertest(app).patch(`/api/game/${result.insertedIds[0]}/point/2`);
+        expect(response.statusCode).toBe(400);
+    });
+    
+    test.each([
+        { scores: [0,0], expected: [1,0] },
+        { scores: [1,0], expected: [2,0] },
+        { scores: [2,0], expected: [3,0] },
+        { scores: [3,0], expected: [4,0] },
+        { scores: [4,0], expected: [5,0] },
+    ])('PATCH /api/game/{id}/point/{player} ingame not decisive', async ({scores, expected}) => {
+        await gameRepository.clear();
+        const result = await gameRepository.insert(createGame({
+            state: {
+                currentSet: 0,
+                tieBreak: true,
+                scores: [
+                    { sets: 0, games: [], points: scores[0] },
+                    { sets: 0, games: [], points: scores[1] }
+                ],
+            }
+        }));
+
+        const response = await supertest(app).patch(`/api/game/${result.insertedIds[0]}/point/1`);
+        expect(response.statusCode).toBe(200);
+        expect(response.body._id).toEqual(`${result.insertedIds[0]}`);
+
+        expect(response.body.state.tieBreak).toBeTruthy();
+        expect(response.body.state.scores[0].points).toEqual(expected[0]);
+        expect(response.body.state.scores[1].points).toEqual(expected[1]);
+
+    });
+    test('PATCH /api/game/{id}/point/{player} ingame decisive', async () => {
+        await gameRepository.clear();
+        const result = await gameRepository.insert(createGame({
+            state: {
+                currentSet: 0,
+                tieBreak: true,
+                scores: [
+                    { sets: 0, games: [], points: 6 },
+                    { sets: 0, games: [], points: 5 }
+                ],
+            }
+        }));
+
+        const response = await supertest(app).patch(`/api/game/${result.insertedIds[0]}/point/1`);
+        expect(response.statusCode).toBe(200);
+        expect(response.body._id).toEqual(`${result.insertedIds[0]}`);
+        
+        expect(response.body.state.scores[0].sets).toEqual(1);
+        expect(response.body.state.scores[1].sets).toEqual(0);
+        expect(response.body.state.scores[0].points).toEqual(0);
+        expect(response.body.state.scores[1].points).toEqual(0);
+        expect(response.body.state.tieBreak).toBeFalsy();
+        
+    });
     afterAll(async () => {
         await mongoClient.close();
     })
