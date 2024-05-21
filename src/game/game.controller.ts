@@ -125,6 +125,9 @@ export class GameController {
                 }
             }
         }
+        else {
+            game.state.scores[playerId].points++;
+        }
 
         await gameCollection.updateOne({ _id: new ObjectId(gameId) }, { $set: { state: game.state } });
 
