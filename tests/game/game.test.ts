@@ -154,12 +154,16 @@ describe('Test /api/game', () => {
         await gameRepository.clear();
         const result = await gameRepository.insert(createGame({
             state: {
-                currentSet: 0,
+                currentSet: 1,
                 tieBreak: true,
                 scores: [
                     { sets: 0, games: [], points: 6 },
                     { sets: 0, games: [], points: 5 }
                 ],
+            },
+            config: {
+                sets: 3,
+                tour: 'ATP'
             }
         }));
 
@@ -172,7 +176,37 @@ describe('Test /api/game', () => {
         expect(response.body.state.scores[0].points).toEqual(0);
         expect(response.body.state.scores[1].points).toEqual(0);
         expect(response.body.state.tieBreak).toBeFalsy();
+
+        expect(response.body.state.scores[0].games[0]).toEqual(0);
+        expect(response.body.state.scores[1].games[0]).toEqual(0);
+    });
+    test('PATCH /api/game/{id}/point/{player} ingame decisive set', async () => {
+        await gameRepository.clear();
+        const result = await gameRepository.insert(createGame({
+            state: {
+                currentSet: 1,
+                tieBreak: true,
+                scores: [
+                    { sets: 0, games: [], points: 6 },
+                    { sets: 0, games: [], points: 5 }
+                ],
+            },
+            config: {
+                sets: 1,
+                tour: 'ATP'
+            }
+        }));
+
+        const response = await supertest(app).patch(`/api/game/${result.insertedIds[0]}/point/0`);
+        expect(response.statusCode).toBe(200);
+        expect(response.body._id).toEqual(`${result.insertedIds[0]}`);
         
+        expect(response.body.state.scores[0].sets).toEqual(1);
+        expect(response.body.state.scores[1].sets).toEqual(0);
+        expect(response.body.state.scores[0].points).toEqual(0);
+        expect(response.body.state.scores[1].points).toEqual(0);
+        expect(response.body.state.tieBreak).toBeFalsy();
+        expect(response.body.state.winner).toEqual(0);
     });
     afterAll(async () => {
         await mongoClient.close();
