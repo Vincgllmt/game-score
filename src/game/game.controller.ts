@@ -5,6 +5,7 @@ import { ObjectId } from "mongodb";
 import { playerCollection } from "../player/player.collection";
 import { Game, Score } from "./game";
 import { Player } from "../player/player";
+import { updateGames, updateScore, updateSets } from "./game.model";
 
 export class GameController {
     static async getAllGame(req: Request, res: Response) {
@@ -95,7 +96,7 @@ export class GameController {
         }
 
         const gameId = req.params.id;
-        const playerId = parseInt(req.params.player);
+        const playerId = parseInt(req.params.player) as 0 | 1;
 
         let game = await gameCollection.findOne<Game>({ _id: new ObjectId(gameId) });
 
@@ -108,25 +109,14 @@ export class GameController {
 
         if (game.state.tieBreak) {
             if (playerScore <= 5) {
-                game.state.scores[playerId].points++;
+                updateScore(game, playerId);
             } else if (playerScore > game.state.scores[1 - playerId].points) {
-                game.state.scores[playerId].sets++;
-                game.state.scores[0].points = 0;
-                game.state.scores[1].points = 0;
-                game.state.tieBreak = false;
-
-                const scoreIndex = game.state.scores.findIndex((score: Score) => score.sets === game.config.sets);
-                if (scoreIndex !== -1) {
-                    game.state.winner = scoreIndex;
-                }else{
-                    game.state.currentSet++;
-                    game.state.scores[0].games.push(playerId);
-                    game.state.scores[1].games.push(playerId);
-                }
+                updateGames(game, playerId);
+                updateSets(game, playerId);
             }
         }
         else {
-            game.state.scores[playerId].points++;
+            updateScore(game, playerId);
         }
 
         await gameCollection.updateOne({ _id: new ObjectId(gameId) }, { $set: { state: game.state } });
