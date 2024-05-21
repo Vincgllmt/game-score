@@ -2,26 +2,28 @@ import { Router } from "express";
 import { HelloController } from "./hello.controller";
 import { body, param } from "express-validator";
 import expressAsyncHandler from "express-async-handler";
+import { helloRepository } from "./hello.repository";
 
 const router = Router();
+const helloController = new HelloController(helloRepository);
 
-router.get('/api/hello/world', HelloController.world);
+router.get('/api/hello/world', helloController.world);
 router.get('/api/hello/square/:num',
     param("num").isNumeric(),
-    HelloController.square
+    helloController.square
 );
 
-router.get('/api/hello', HelloController.hello);
+router.get('/api/hello', helloController.readAll.bind(helloController));
 router.post('/api/hello',
     body("message").isString().notEmpty(),
-    expressAsyncHandler(HelloController.addHello)
+    expressAsyncHandler(helloController.create.bind(helloController))
 );
 router.get('/api/hello/:id',
     param("id").notEmpty().isMongoId(),
-    expressAsyncHandler(HelloController.findHello)
+    expressAsyncHandler(helloController.read.bind(helloController))
 );
 router.delete('/api/hello/:id',
     param("id").notEmpty().isMongoId(),
-    expressAsyncHandler(HelloController.deleteHello)
+    expressAsyncHandler(helloController.delete.bind(helloController))
 );
 export default router;
