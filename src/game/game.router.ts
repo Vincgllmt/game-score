@@ -19,4 +19,10 @@ router.post('/api/game/new',
     body('players.id2').isString(),
     body('config.sets').isInt({ min:1 }),
 expressAsyncHandler(GameController.createGame));
+
+router.patch('/api/game/:id/point/:player',
+    param('id').isString().isMongoId(),
+    param('player').isInt({ min:0, max:1 }),
+    expressAsyncHandler(GameController.patchPointToPlayer));
+
 export default router;

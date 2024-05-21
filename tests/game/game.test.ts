@@ -141,7 +141,7 @@ describe('Test /api/game', () => {
             }
         }));
 
-        const response = await supertest(app).patch(`/api/game/${result.insertedIds[0]}/point/1`);
+        const response = await supertest(app).patch(`/api/game/${result.insertedIds[0]}/point/0`);
         expect(response.statusCode).toBe(200);
         expect(response.body._id).toEqual(`${result.insertedIds[0]}`);
 
@@ -163,7 +163,7 @@ describe('Test /api/game', () => {
             }
         }));
 
-        const response = await supertest(app).patch(`/api/game/${result.insertedIds[0]}/point/1`);
+        const response = await supertest(app).patch(`/api/game/${result.insertedIds[0]}/point/0`);
         expect(response.statusCode).toBe(200);
         expect(response.body._id).toEqual(`${result.insertedIds[0]}`);
         

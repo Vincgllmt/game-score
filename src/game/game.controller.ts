@@ -84,4 +84,40 @@ export class GameController {
 
         res.status(201).send(game);
     }
+
+    static async patchPointToPlayer(req: Request, res: Response) {
+        const validator = validationResult(req);
+
+        if (!validator.isEmpty()) {
+            res.status(400).send({ error: 'Invalid input' });
+            return;
+        }
+
+        const gameId = req.params.id;
+        const playerId = parseInt(req.params.player);
+
+        let game = await gameCollection.findOne<Game>({ _id: new ObjectId(gameId) });
+
+        if (!game) {
+            res.status(404).send({ error: 'Game not found' });
+            return;
+        }
+
+        const playerScore = game.state.scores[playerId].points;
+
+        if(game.state.tieBreak) {
+            if (playerScore <= 5) {
+                game.state.scores[playerId].points++;
+            }else if(playerScore > game.state.scores[1 - playerId].points) {
+                game.state.scores[playerId].sets++;
+                game.state.scores[0].points = 0;
+                game.state.scores[1].points = 0;
+                game.state.tieBreak = false;
+            }
+        }
+
+        await gameCollection.updateOne({ _id: new ObjectId(gameId) }, { $set: { state: game.state } });
+
+        res.status(200).json(game);
+    }
 }
