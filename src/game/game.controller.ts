@@ -1,5 +1,5 @@
-import { Request, Response } from "express";
-import { validationResult } from "express-validator";
+import { Request, Response, Router } from "express";
+import { body, param, query, validationResult } from "express-validator";
 import { gameCollection } from "./game.collection";
 import { ObjectId } from "mongodb";
 import { playerCollection } from "../player/player.collection";
@@ -7,6 +7,7 @@ import { Game } from "./game";
 import { Player } from "../player/player";
 import { updateGames, updateScore, updateSets } from "./game.model";
 import { Controller } from "../base/controller";
+import expressAsyncHandler from "express-async-handler";
 
 export class GameController extends Controller<Game> {
     public async getAllGame(req: Request, res: Response) {
@@ -105,5 +106,30 @@ export class GameController extends Controller<Game> {
         await gameCollection.updateOne({ _id: new ObjectId(gameId) }, { $set: { state: game.state } });
 
         res.status(200).json(game);
+    }
+
+    public newRouter() {
+        const router = Router();
+        router.get('/api/game',
+            query('tour').optional().isString().isIn(['ATP', 'WTA']),
+            query('state').optional().isString().isIn(['ongoing', "completed"]),
+            query('lastName').optional().isString(),
+            expressAsyncHandler(this.getAllGame.bind(this)));
+        router.get('/api/game/:id',
+            param('id').isString().isMongoId(),
+            expressAsyncHandler(this.read.bind(this)));
+        router.post('/api/game/new',
+            body('config.tour').isString().isIn(['ATP', 'WTA']),
+            body('players.id1').isString(),
+            body('players.id2').isString(),
+            body('config.sets').isInt({ min:1 }),
+        expressAsyncHandler(this.createGame.bind(this)));
+
+        router.patch('/api/game/:id/point/:player',
+            param('id').isString().isMongoId(),
+            param('player').isInt({ min:0, max:1 }),
+            expressAsyncHandler(this.patchPointToPlayer.bind(this)));
+
+        return router;
     }
 }

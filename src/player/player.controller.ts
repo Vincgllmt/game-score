@@ -1,8 +1,9 @@
-import { Request, Response } from "express";
-import { validationResult } from "express-validator";
+import { Request, Response, Router } from "express";
+import { body, param, query, validationResult } from "express-validator";
 import { playerCollection } from "./player.collection";
 import { Controller } from "../base/controller";
 import { Player } from "./player";
+import expressAsyncHandler from "express-async-handler";
 
 export class PlayerController extends Controller<Player> {
     public async getAllPlayers(req: Request, res: Response) {
@@ -30,5 +31,31 @@ export class PlayerController extends Controller<Player> {
         ]).toArray();
 
         res.send(players);
+    }
+
+    public newRouter() {
+        const router = Router();
+
+        router.get('/api/player',
+            query('lastName').optional().isString().notEmpty(),
+            query('tour').optional().isString().notEmpty().isIn(['ATP', 'WTA']),
+            query('country').optional().isString().notEmpty(),
+            expressAsyncHandler(this.getAllPlayers));
+
+        router.get('/api/player/:id',
+            param('id').isString().notEmpty().isMongoId(),
+            expressAsyncHandler(this.read.bind(this)));
+
+        router.post('/api/player',
+            body('firstName').isString().notEmpty(),
+            body('lastName').isString().notEmpty(),
+            body('country').isString().notEmpty(),
+            body('tour').isString().notEmpty().isIn(['ATP', 'WTA']),
+            expressAsyncHandler(this.create.bind(this)));
+        router.delete('/api/player/:id',
+            param('id').isString().notEmpty().isMongoId(),
+            expressAsyncHandler(this.delete.bind(this)));
+        
+        return router;
     }
 }

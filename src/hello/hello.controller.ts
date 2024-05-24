@@ -1,11 +1,8 @@
-import { Request, Response } from "express";
-import { validationResult } from "express-validator";
-import { helloCollection } from "./hello.collection";
-import { helloRepository } from "./hello.repository";
-import { ObjectId } from "mongodb";
-import { Repository } from "../base/repository";
+import { Request, Response, Router } from "express";
+import { body, param, validationResult } from "express-validator";
 import { HelloData } from "./hello";
 import { Controller } from "../base/controller";
+import expressAsyncHandler from "express-async-handler";
 
 export class HelloController extends Controller<HelloData> {
 
@@ -21,5 +18,29 @@ export class HelloController extends Controller<HelloData> {
         } else {
             res.status(404).send({ error: 'Invalid input' });
         }
+    }
+    public newRouter() {
+        const router = Router();
+        router.get('/api/hello/world', this.world.bind(this));
+        router.get('/api/hello/square/:num',
+            param("num").isNumeric(),
+            this.square.bind(this)
+        );
+        
+        router.get('/api/hello', this.readAll.bind(this));
+        router.post('/api/hello',
+            body("message").isString().notEmpty(),
+            expressAsyncHandler(this.create.bind(this))
+        );
+        router.get('/api/hello/:id',
+            param("id").notEmpty().isMongoId(),
+            expressAsyncHandler(this.read.bind(this))
+        );
+        router.delete('/api/hello/:id',
+            param("id").notEmpty().isMongoId(),
+            expressAsyncHandler(this.delete.bind(this))
+        );
+
+        return router;
     }
 }
