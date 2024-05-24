@@ -20,7 +20,7 @@ export class HelloController extends Controller<HelloData> {
         }
     }
     public newRouter() {
-        const router = Router();
+        const router = super.newRouter();
         router.get('/api/hello/world', this.world.bind(this));
         router.get('/api/hello/square/:num',
             param("num").isNumeric(),

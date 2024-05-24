@@ -109,7 +109,7 @@ export class GameController extends Controller<Game> {
     }
 
     public newRouter() {
-        const router = Router();
+        const router = super.newRouter();
         router.get('/api/game',
             query('tour').optional().isString().isIn(['ATP', 'WTA']),
             query('state').optional().isString().isIn(['ongoing', "completed"]),

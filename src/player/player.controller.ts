@@ -34,7 +34,7 @@ export class PlayerController extends Controller<Player> {
     }
 
     public newRouter() {
-        const router = Router();
+        const router = super.newRouter();
 
         router.get('/api/player',
             query('lastName').optional().isString().notEmpty(),

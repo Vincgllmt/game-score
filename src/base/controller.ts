@@ -1,7 +1,7 @@
 import { validationResult } from "express-validator";
 import { BaseEntity } from "./entity";
 import { Repository } from "./repository";
-import { Request, Response } from "express";
+import { Request, Response, Router } from "express";
 
 export class Controller<TEntity extends BaseEntity> {
     constructor(
@@ -59,5 +59,9 @@ export class Controller<TEntity extends BaseEntity> {
         else {
             res.status(400).send({ error: 'Invalid input' });
         }
+    }
+
+    public newRouter() {
+        return Router();
     }
 }
