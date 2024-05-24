@@ -76,12 +76,12 @@ describe('Test /api/hello', () => {
         expect(response.statusCode).toBe(200);
         expect(response.body.message).toEqual("feldiagonal");
     })
-    test("GET /api/hello/{id} not found", async () => {
+    test("GET /api/hello/{id} Not found", async () => {
         await helloRepository.clear();
         const response = await supertest(app).get(`/api/hello/6641d45e2607250013854265`);
 
         expect(response.statusCode).toBe(404);
-        expect(response.body.error).toEqual("Message non trouvé.");
+        expect(response.body.error).toEqual("Not found");
     })
     test("DELETE /api/hello/{id}", async () => {
         await helloRepository.clear();
@@ -93,12 +93,12 @@ describe('Test /api/hello', () => {
         expect(response.statusCode).toBe(204);
         expect(await helloRepository.findAll()).toStrictEqual([]);
     })
-    test("DELETE /api/hello/{id} not found", async () => {
+    test("DELETE /api/hello/{id} Not found", async () => {
         await helloRepository.clear();
         const response = await supertest(app).delete(`/api/hello/6641d45e2607250013854265`);
 
         expect(response.statusCode).toBe(404);
-        expect(response.body.error).toEqual("Message non trouvé.");
+        expect(response.body.error).toEqual("Not found");
     })
     afterAll(async () => {
         await mongoClient.close();

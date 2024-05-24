@@ -56,13 +56,13 @@ describe('Test /api/player', () => {
         expect(response.body.country).toEqual(player.country);
         expect(response.body.tour).toEqual(player.tour);
     })
-    test('GET /api/player/{id} not found', async () => {
+    test('GET /api/player/{id} Not found', async () => {
         await playerRepository.clear();
         
         const response = await supertest(app).get(`/api/player/6641d45e2607250013854265`);
         
         expect(response.statusCode).toBe(404); 
-        expect(response.body).toStrictEqual({ error: 'Player not found' });
+        expect(response.body).toStrictEqual({ error: 'Not found' });
     })
     test('GET /api/player/{id} invalid id', async () => {
         await playerRepository.clear();
@@ -105,12 +105,12 @@ describe('Test /api/player', () => {
         expect(response.statusCode).toBe(204);
         expect(await playerRepository.findAll()).toStrictEqual([]);
     })
-    test('DELETE /api/player/{id} not found', async () => {
+    test('DELETE /api/player/{id} Not found', async () => {
         await playerRepository.clear();
         const response = await supertest(app).delete(`/api/player/6641d45e2607250013854265`);
 
         expect(response.statusCode).toBe(404);
-        expect(response.body).toStrictEqual({ error: 'Player not found' });
+        expect(response.body).toStrictEqual({ error: 'Not found' });
     })
     afterAll(async () => {
         await mongoClient.close();

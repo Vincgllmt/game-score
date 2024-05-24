@@ -35,7 +35,7 @@ export class Controller<TEntity extends BaseEntity> {
                 res.send(result);
             }
             else {
-                res.status(404).send({ error: 'Message non trouvé.' });
+                res.status(404).send({ error: 'Not found' });
             }     
         }
         else {
@@ -53,7 +53,7 @@ export class Controller<TEntity extends BaseEntity> {
                 res.status(204).send({ message: 'Message supprimé.' });
             }
             else {
-                res.status(404).send({ error: 'Message non trouvé.' });
+                res.status(404).send({ error: 'Not found' });
             }
         }
         else {

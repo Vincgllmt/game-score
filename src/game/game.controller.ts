@@ -7,15 +7,8 @@ import { Game } from "./game";
 import { Player } from "../player/player";
 import { updateGames, updateScore, updateSets } from "./game.model";
 import { Controller } from "../base/controller";
-import { Repository } from "../base/repository";
 
 export class GameController extends Controller<Game> {
-    
-    constructor(repository: Repository<Game>) {
-        super(repository);
-    }
-
-    
     public async getAllGame(req: Request, res: Response) {
         const validator = validationResult(req);
 
@@ -64,7 +57,7 @@ export class GameController extends Controller<Game> {
             _id: { $in: [new ObjectId(id1), new ObjectId(id2)] }
         }).toArray();
         if (players.length !== 2) {
-            res.status(404).send({ error: 'Player not found' });
+            res.status(404).send({ error: 'Player Not found' });
             return;
         }
         const game: Game = {
@@ -91,7 +84,7 @@ export class GameController extends Controller<Game> {
         let game = await gameCollection.findOne<Game>({ _id: new ObjectId(gameId) });
 
         if (!game) {
-            res.status(404).send({ error: 'Game not found' });
+            res.status(404).send({ error: 'Game Not found' });
             return;
         }
 

@@ -100,16 +100,16 @@ describe('Test /api/game', () => {
         const game = createGame();
         const result = await gameRepository.insert(game);
         const response = await supertest(app).get(`/api/game/${result.insertedIds[0]}`);
-        
+
         expect(response.statusCode).toBe(200);
         expect(response.body._id).toEqual(`${result.insertedIds[0]}`);
     });
-    test('GET /api/game/{id} not found', async () => {
+    test('GET /api/game/{id} Not found', async () => {
         await gameRepository.clear();
         const response = await supertest(app).get(`/api/game/123456789012345678901234`);
         expect(response.statusCode).toBe(404);
     });
-    test('PATCH /api/game/{id}/point/{player} not found', async () => {
+    test('PATCH /api/game/{id}/point/{player} Not found', async () => {
         await gameRepository.clear();
         const response = await supertest(app).patch(`/api/game/123456789012345678901234/point/1`);
         expect(response.statusCode).toBe(404);
