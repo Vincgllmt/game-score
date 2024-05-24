@@ -264,13 +264,32 @@ paths:
                       - WTA
                     sets:
                       type: number
+  /api/game/{id}/point/{player}:
+    patch:
+      tags:
+        - game
+        - player
+      description: Ajoute un point à un joueur
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: player
+          in: path
+          required: true
+          schema:
+            type: number
       responses:
         201:
-          description: Match ajouté avec succès
+          description: Point ajouté avec succès
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Game'
+        404:
+          description: Match non trouvé
   
 components:
   schemas:
