@@ -3,12 +3,20 @@ import { validationResult } from "express-validator";
 import { gameCollection } from "./game.collection";
 import { ObjectId } from "mongodb";
 import { playerCollection } from "../player/player.collection";
-import { Game, Score } from "./game";
+import { Game } from "./game";
 import { Player } from "../player/player";
 import { updateGames, updateScore, updateSets } from "./game.model";
+import { Controller } from "../base/controller";
+import { Repository } from "../base/repository";
 
-export class GameController {
-    static async getAllGame(req: Request, res: Response) {
+export class GameController extends Controller<Game> {
+    
+    constructor(repository: Repository<Game>) {
+        super(repository);
+    }
+
+    
+    public async getAllGame(req: Request, res: Response) {
         const validator = validationResult(req);
 
         if (!validator.isEmpty()) {
@@ -40,26 +48,8 @@ export class GameController {
         res.send(players);
 
     }
-    static async getGameById(req: Request, res: Response) {
-        const validator = validationResult(req);
 
-        if (!validator.isEmpty()) {
-            res.status(400).send({ error: 'Invalid input' });
-            return;
-        }
-
-        const gameId = req.params.id;
-
-        const game = await gameCollection.findOne({ _id: new ObjectId(gameId) });
-
-        if (!game) {
-            res.status(404).send({ error: 'Game not found' });
-            return;
-        }
-
-        res.send(game);
-    }
-    static async createGame(req: Request, res: Response) {
+    public async createGame(req: Request, res: Response) {
         const validator = validationResult(req);
 
         if (!validator.isEmpty()) {
@@ -87,7 +77,7 @@ export class GameController {
         res.status(201).send(game);
     }
 
-    static async patchPointToPlayer(req: Request, res: Response) {
+    public async patchPointToPlayer(req: Request, res: Response) {
         const validator = validationResult(req);
 
         if (!validator.isEmpty()) {

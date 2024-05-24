@@ -29,6 +29,7 @@ export class Controller<TEntity extends BaseEntity> {
 
         if (result.isEmpty()) {
             const data = req.params;
+
             const result = await this.repository.findById(data.id);
             if (result) {
                 res.send(result);

@@ -13,8 +13,6 @@ describe('Test /api/player', () => {
         }
         
         const response = await supertest(app).get("/api/player");
-        
-        console.log(response.body[0]);
 
         expect(response.statusCode).toBe(200);
         expect(response.body.length).toEqual(10);

@@ -100,7 +100,7 @@ describe('Test /api/game', () => {
         const game = createGame();
         const result = await gameRepository.insert(game);
         const response = await supertest(app).get(`/api/game/${result.insertedIds[0]}`);
-
+        
         expect(response.statusCode).toBe(200);
         expect(response.body._id).toEqual(`${result.insertedIds[0]}`);
     });
