@@ -123,7 +123,10 @@ paths:
           description: Le tour du joueur
           required: false
           schema:
-            type: integer
+            type: string
+            enum:
+            - ATP
+            - WTA
         - name: country
           in: query
           description: Le pays du joueur
