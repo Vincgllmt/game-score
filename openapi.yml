@@ -6,7 +6,9 @@ info:
 
 servers:
 - url: http://localhost:7777
-  description: Serveur de développement
+  description: Serveur de développement (Node)
+- url: http://localhost:8888
+  description: Serveur de développement (Go)
 
 tags:
   - name: hello
@@ -44,7 +46,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Square'
-  /api/hello:
+  /api/hello/:
     get:
       tags:
         - hello
@@ -104,7 +106,7 @@ paths:
       responses:
         204:
           description: Hello supprimé avec succès
-  /api/player:
+  /api/player/:
     get:
       tags:
         - player
@@ -183,7 +185,7 @@ paths:
       responses:
         204:
           description: Joueur supprimé avec succès
-  /api/game:
+  /api/game/:
     get:
       tags:
         - game
